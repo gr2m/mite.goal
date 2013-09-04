@@ -15,16 +15,19 @@
 
     //
     function expect(url) {
-      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/#(.*)$/);
+      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/\#(.*)$/);
       accountName = matches[1];
       var query = matches[2];
       query.split(/&/).forEach(function(keyAndValue) {
         keyAndValue = keyAndValue.split('=');
         var key = keyAndValue[0];
-        var value = keyAndValue[1];
+        var value = decodeURIComponent(keyAndValue[1]);
 
         params[key] = value;
       });
+
+      // group_by is always "day"
+      params.group_by = 'day';
 
       return {
         toBe: toBe
@@ -84,12 +87,8 @@
       var chartData = [['Date', 'projected', 'actual']];
       google.setOnLoadCallback(function() {
         mite = new Mite({account: accountName, api_key: apiKey})
-        mite.TimeEntry.all({
-          at: 'this_month',
-          customer_id: '180007,217866',
-          group_by: 'day',
-          sort: 'date ASC'
-        }, function(response) {
+        console.log(params)
+        mite.TimeEntry.all(params, function(response) {
           var miteData = response.map( function(item) { return item.time_entry_group } );
           var today = Date.today()
           var todayString = JSON.stringify(today).substr(0,11).replace(/"/g, '')
@@ -131,11 +130,11 @@
           var resultBehind = [Math.round((shouldBe - currentTotal) / 6) / 10, 'hours'].join(' ');
           var resultDaysLeft = [daysLeft, 'days'].join(' ');
           var $summary = $('<div class="summary"></div>').html(
-            'You made <strong class="current">'+resultCurrent+'</strong>' +
-            'out of your <strong class="goal">'+resultGoal+'</strong> goal.' +
-            'By plan, you should be at <strong class="projected">'+resultShouldBe+'</strong> today.' +
-            'You are behind by <strong class="missing">'+resultBehind+'</strong>.' +
-            'You have <strong class="daysLeft">'+resultDaysLeft+'</strong> to catch up.'
+            'You made <strong class="current">'+resultCurrent+'</strong> ' +
+            'out of your <strong class="goal">'+resultGoal+'</strong> goal. ' +
+            'By plan, you should be at <strong class="projected">'+resultShouldBe+'</strong> today. ' +
+            'You are behind by <strong class="missing">'+resultBehind+'</strong>. ' +
+            'You have <strong class="daysLeft">'+resultDaysLeft+'</strong> to catch up. '
           );
           $summary.appendTo(document.body);
           $summary.fitText();

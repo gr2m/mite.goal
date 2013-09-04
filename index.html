@@ -55,7 +55,7 @@
   <script>
     // simply append the URL of your mite report with ?
     // e.g. https://youraccount.mite.yo.lk/reports/time_entries/#at=this_month&customer_id=123,124&group_by=day%2Ccustomer&sort=date%20ASC
-    var miteReportUrl = location.search.substr(1) + '#' + location.hash;
+    var miteReportUrl = location.search.substr(1) + location.hash;
     var apiKey = localStorage.apiKey || prompt('your mite API key')
     localStorage.apiKey = apiKey;
 
@@ -68,7 +68,7 @@
     .expect( miteReportUrl )
 
     // Number in hours, can also be { days: 2 } etc
-    .toBe( 40 )
+    .toBe( 48 )
 
     // (optional) Date Object or whatever http://www.datejs.com/ understands.
     .by( 'Sep 14th' )
