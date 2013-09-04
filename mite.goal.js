@@ -123,18 +123,30 @@
             currentDay = currentDay.add(1).day()
           };
 
-          var resultCurrent = [Math.round(currentTotal / 6) / 10, 'hours'].join(' ');
-          var resultGoal = [Math.round(goal / 6) / 10, 'hours'].join(' ');
+          function hoursToString(hours) {
+            var h = Math.floor(hours)
+            var m = Math.floor((hours - h) * 60);
+            if (m < 10) {
+              m = '0' + m;
+            }
+            return [h,m].join(':')
+          }
+
+          var resultCurrent = hoursToString(Math.round(currentTotal / 6) / 10)
+          var resultGoal = hoursToString(Math.round(goal / 6) / 10)
           var shouldBe = goal / days * (days - daysLeft);
-          var resultShouldBe = [Math.round(shouldBe / 6) / 10, 'hours'].join(' ');
-          var resultBehind = [Math.round((shouldBe - currentTotal) / 6) / 10, 'hours'].join(' ');
-          var resultDaysLeft = [daysLeft, 'days'].join(' ');
+          var resultShouldBe = hoursToString(Math.round(shouldBe / 6) / 10)
+          var catchUpHours = hoursToString(Math.round((goal - shouldBe + currentTotal) / daysLeft / 6) / 10)
+          var resultDaysLeft = daysLeft;
+
+
+
           var $summary = $('<div class="summary"></div>').html(
-            'You made <strong class="current">'+resultCurrent+'</strong> ' +
-            'out of your <strong class="goal">'+resultGoal+'</strong> goal. ' +
-            'By plan, you should be at <strong class="projected">'+resultShouldBe+'</strong> today. ' +
-            'You are behind by <strong class="missing">'+resultBehind+'</strong>. ' +
-            'You have <strong class="daysLeft">'+resultDaysLeft+'</strong> to catch up. '
+            'You made <strong>'+resultCurrent+'</strong> ' +
+            'out of your <strong>'+resultGoal+'</strong> goal. ' +
+            'By plan, you should be at <strong>'+resultShouldBe+'</strong> today. ' +
+            'To catch up, you have to work <strong>'+catchUpHours+'</strong> for ' +
+            'the next <strong>'+resultDaysLeft+' days</strong>. '
           );
           $summary.appendTo(document.body);
           $summary.fitText();
