@@ -5,7 +5,7 @@ A simple, HTML-based app to set and visualize goals for
 time or revenue tracked with [mite](http://mite.yo.lk/).
 
 It looks like this:
-![screenshot](https://raw.github.com/gr2m/mite.goal/master/src/screenshot.png)
+![screenshot](https://raw.github.com/gr2m/mite.goal/master/screenshot.png)
 
 The (dream) API to create this chart:
 
