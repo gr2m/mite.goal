@@ -15,7 +15,7 @@
 
     //
     function expect(url) {
-      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/\?#(.*)$/);
+      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/?#(.*)$/);
       accountName = matches[1];
       var query = matches[2];
       query.split(/&/).forEach(function(keyAndValue) {
@@ -28,6 +28,7 @@
 
       // group_by is always "day"
       params.group_by = 'day';
+      params.sort = 'date ASC';
 
       return {
         toBe: toBe
@@ -87,7 +88,6 @@
       var chartData = [['Date', 'projected', 'actual']];
       google.setOnLoadCallback(function() {
         mite = new Mite({account: accountName, api_key: apiKey})
-        console.log(params)
         mite.TimeEntry.all(params, function(response) {
           var miteData = response.map( function(item) { return item.time_entry_group } );
           var today = Date.today()
@@ -136,7 +136,7 @@
           var resultGoal = hoursToString(Math.round(goal / 6) / 10)
           var shouldBe = goal / days * (days - daysLeft);
           var resultShouldBe = hoursToString(Math.round(shouldBe / 6) / 10)
-          var catchUpHours = hoursToString(Math.round((goal - shouldBe + currentTotal) / daysLeft / 6) / 10)
+          var catchUpHours = hoursToString(Math.round((goal - currentTotal) / daysLeft / 6) / 10)
           var resultDaysLeft = daysLeft;
 
 
