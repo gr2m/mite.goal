@@ -3,6 +3,7 @@
 <head>
   <title>mite.goal example</title>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script src="vendor/jquery.fittext.js"></script>
   <script src="vendor/mite.js"></script>
   <script src="vendor/date.js"></script>
@@ -51,15 +52,20 @@
   </style>
 </head>
 <body>
-
   <script>
+    // simply append the URL of your mite report with ?
+    // e.g. https://youraccount.mite.yo.lk/reports/time_entries/#at=this_month&customer_id=123,124&group_by=day%2Ccustomer&sort=date%20ASC
+    var miteReportUrl = location.search.substr(1) + '#' + location.hash;
+    var apiKey = localStorage.apiKey || prompt('your mite API key')
+    localStorage.apiKey = apiKey;
+
     MiteGoal({
       // your API key here, find it at https://<your accountname>.mite.yo.lk/account
-      apiKey: '12345678'
+      apiKey: apiKey
     })
 
     // create a report and past its URL here
-    .expect('https://myaccountname.mite.yo.lk/reports/time_entries#at=this_week')
+    .expect( miteReportUrl )
 
     // Number in hours, can also be { days: 2 } etc
     .toBe( 40 )
@@ -69,120 +75,6 @@
 
     // renders report fullscreen on document.body. You can also pass an element selector
     .render()
-  </script>
-
-  <!-- numbers will be replaced with real data -->
-  <div class="summary">
-    You made <strong class="current">12.8 hours</strong>
-    out of your <strong class="goal">40 hours</strong> goal.
-    By plan, you should be at <strong class="projected">14.3 hours</strong> today.
-    You are behind by <strong class="missing">1.5 hours</strong>.
-    You have <strong class="daysLeft">10 days left</strong> to catch up.
-  </div>
-
-  <script>
-    $('.summary').fitText()
-  </script>
-
-  <div id="chart"></div>
-
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    google.load("visualization", "1", {packages:["corechart"]});
-    function drawChart() {
-      var table = google.visualization.arrayToDataTable(chartData);
-
-      var options = {
-        chartArea: {
-          top: '30%',
-          left: 0,
-          width: '100%',
-          height: '70%'
-        },
-        theme: 'maximized',
-        colors: ['#eee', '#FF8215'],
-        legend: { position: 'none' },
-        vAxis: {
-          textPosition: 'none',
-          gridlines: { color: 'transparent'}
-        },
-        hAxis: {
-          textPosition: 'none'
-        },
-        aggregationTarget: 'auto'
-      };
-
-      var chart = new google.visualization.AreaChart(document.getElementById('chart'));
-      chart.draw(table, options);
-    }
-    window.onresize = drawChart
-
-
-    var account = localStorage.account || prompt('mite account name')
-    var api_key = localStorage.api_key || prompt('mite api_key')
-
-    localStorage.account = account;
-    localStorage.api_key = api_key;
-
-    var chartData = [['Date', 'projected', 'actual']];
-    google.setOnLoadCallback(function() {
-      mite = new Mite({account: account, api_key: api_key})
-      mite.TimeEntry.all({
-        at: 'this_month',
-        customer_id: '180007,217866',
-        group_by: 'day',
-        sort: 'date ASC'
-      }, function(response) {
-        var miteData = response.map( function(item) { return item.time_entry_group } );
-        var startDate = Date.parse('2013-09-01')
-        var endDate = Date.parse('2013-09-14')
-        var today = Date.today()
-        var todayString = JSON.stringify(today).substr(0,11).replace(/"/g, '')
-
-        var oneDay = 24*60*60*1000;
-        var days = Math.round(Math.abs((startDate.getTime() - endDate.getTime())/(oneDay))) + 1;
-        var goal = 48 * 60; // 48 hours
-        var perDay = goal / days;
-
-        var currentDay = startDate;
-        var current = 0;
-        var currentTotal = 0;
-        var daysLeft;
-
-        for (var day = 1; day <= days; day++) {
-          var dayString = JSON.stringify(currentDay).substr(0,11).replace(/"/g, '')
-          if (! miteData.length) {
-            if (! currentTotal) {
-              currentTotal = current
-            }
-            current = null
-          } else if (dayString == miteData[0].day) {
-            current += miteData.shift().minutes
-          }
-          if (todayString >= dayString) {
-            daysLeft = days - day;
-          }
-          chartData.push([
-            dayString,
-            perDay * day,
-            current
-          ])
-          currentDay = currentDay.add(1).day()
-        };
-
-
-
-        $('.current').text([Math.round(currentTotal / 6) / 10, 'hours'].join(' '))
-        $('.goal').text([Math.round(goal / 6) / 10, 'hours'].join(' '))
-        var shouldBe = goal / days * (days - daysLeft)
-        $('.projected').text([Math.round(shouldBe / 6) / 10, 'hours'].join(' '))
-        $('.missing').text([Math.round((shouldBe - currentTotal) / 6) / 10, 'hours'].join(' '))
-        $('.daysLeft').text([daysLeft, 'days'].join(' '))
-        $('.summary').addClass('show')
-
-        drawChart()
-      });
-    });
   </script>
 </body>
 </html>
