@@ -24,5 +24,5 @@ MiteGoal({
 License & Copyright
 -------------------
 
-Copyright Gregor Martynus
+© Gregor Martynus.
 Licensed unter the MIT license
