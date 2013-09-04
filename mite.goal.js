@@ -15,7 +15,7 @@
 
     //
     function expect(url) {
-      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/\#(.*)$/);
+      var matches = url.match(/(\w+)\.mite.yo.lk\/reports\/time_entries\/\?#(.*)$/);
       accountName = matches[1];
       var query = matches[2];
       query.split(/&/).forEach(function(keyAndValue) {
