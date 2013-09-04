@@ -1,5 +1,4 @@
-// fake it until you make it!
-
+/* global $, google, Mite */
 (function() {
   'use strict';
 
@@ -55,7 +54,7 @@
 
     //
     function render() {
-      google.load("visualization", "1", {packages:["corechart"]});
+      google.load('visualization', '1', {packages:['corechart']});
       function drawChart() {
         var table = google.visualization.arrayToDataTable(chartData);
 
@@ -82,16 +81,15 @@
         var chart = new google.visualization.AreaChart(document.getElementById('chart'));
         chart.draw(table, options);
       }
-      window.onresize = drawChart
-
+      window.onresize = drawChart;
 
       var chartData = [['Date', 'projected', 'actual']];
       google.setOnLoadCallback(function() {
-        mite = new Mite({account: accountName, api_key: apiKey})
+        mite = new Mite({account: accountName, api_key: apiKey});
         mite.TimeEntry.all(params, function(response) {
-          var miteData = response.map( function(item) { return item.time_entry_group } );
-          var today = Date.today()
-          var todayString = JSON.stringify(today).substr(0,11).replace(/"/g, '')
+          var miteData = response.map( function(item) { return item.time_entry_group; } );
+          var today = Date.today();
+          var todayString = JSON.stringify(today).substr(0,11).replace(/"/g, '');
 
           var oneDay = 24*60*60*1000;
           var days = Math.round(Math.abs((startDate.getTime() - endDate.getTime())/(oneDay))) + 1;
@@ -103,14 +101,14 @@
           var daysLeft;
 
           for (var day = 1; day <= days; day++) {
-            var dayString = JSON.stringify(currentDay).substr(0,11).replace(/"/g, '')
+            var dayString = JSON.stringify(currentDay).substr(0,11).replace(/"/g, '');
             if (! miteData.length) {
               if (! currentTotal) {
-                currentTotal = current
+                currentTotal = current;
               }
-              current = null
+              current = null;
             } else if (dayString == miteData[0].day) {
-              current += miteData.shift().minutes
+              current += miteData.shift().minutes;
             }
             if (todayString >= dayString) {
               daysLeft = days - day;
@@ -119,27 +117,25 @@
               dayString,
               perDay * day,
               current
-            ])
-            currentDay = currentDay.add(1).day()
-          };
+            ]);
+            currentDay = currentDay.add(1).day();
+          }
 
           function hoursToString(hours) {
-            var h = Math.floor(hours)
+            var h = Math.floor(hours);
             var m = Math.floor((hours - h) * 60);
             if (m < 10) {
               m = '0' + m;
             }
-            return [h,m].join(':')
+            return [h,m].join(':');
           }
 
-          var resultCurrent = hoursToString(Math.round(currentTotal / 6) / 10)
-          var resultGoal = hoursToString(Math.round(goal / 6) / 10)
+          var resultCurrent = hoursToString(Math.round(currentTotal / 6) / 10);
+          var resultGoal = hoursToString(Math.round(goal / 6) / 10);
           var shouldBe = goal / days * (days - daysLeft);
-          var resultShouldBe = hoursToString(Math.round(shouldBe / 6) / 10)
-          var catchUpHours = hoursToString(Math.round((goal - currentTotal) / daysLeft / 6) / 10)
+          var resultShouldBe = hoursToString(Math.round(shouldBe / 6) / 10);
+          var catchUpHours = hoursToString(Math.round((goal - currentTotal) / daysLeft / 6) / 10);
           var resultDaysLeft = daysLeft;
-
-
 
           var $summary = $('<div class="summary"></div>').html(
             'You made <strong>'+resultCurrent+'</strong> ' +
@@ -153,7 +149,7 @@
           $('.summary').addClass('show');
 
           $('<div id="chart"></div>').appendTo(document.body);
-          drawChart()
+          drawChart();
         });
       });
     }
