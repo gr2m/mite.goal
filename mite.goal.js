@@ -121,6 +121,8 @@
             currentDay = currentDay.add(1).day();
           }
 
+          currentTotal = currentTotal || current;
+
           function hoursToString(hours) {
             var h = Math.floor(hours);
             var m = Math.floor((hours - h) * 60);
