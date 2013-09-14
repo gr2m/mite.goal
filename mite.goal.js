@@ -143,7 +143,7 @@
             'You made <strong>'+resultCurrent+'</strong> ' +
             'out of your <strong>'+resultGoal+'</strong> goal. ' +
             'By plan, you should be at <strong>'+resultShouldBe+'</strong> today. ' +
-            'To catch up, you have to work <strong>'+catchUpHours+'</strong> for ' +
+            'You have to work <strong>'+catchUpHours+'</strong> for ' +
             'the next <strong>'+resultDaysLeft+' days</strong>. '
           );
           $summary.appendTo(document.body);
