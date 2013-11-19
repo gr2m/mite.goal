@@ -29,6 +29,13 @@
       params.group_by = 'day';
       params.sort = 'date ASC';
 
+      if (params.at === 'this_month') {
+        var month = Date.today().getMonth() + 1;
+        var year = Date.today().getFullYear();
+        startDate = Date.parse([year,month,1].join('-'));
+        endDate = Date.parse([year,month,30].join('-'));
+      }
+
       return {
         toBe: toBe
       };
@@ -45,8 +52,8 @@
 
     //
     function by(dateString) {
-      startDate = Date.parse('2013-09-01');
       endDate = Date.parse( dateString );
+      startDate = Date.parse( dateString ).add(-28).days();
       return {
         render: render
       };
