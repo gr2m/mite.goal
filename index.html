@@ -7,7 +7,7 @@
   <script src="vendor/jquery.fittext.js"></script>
   <script src="vendor/mite.js"></script>
   <script src="vendor/date.js"></script>
-  <script src="mite.goal.js?v2"></script>
+  <script src="mite.goal.js?v3"></script>
 
   <style>
     * { padding: 0; margin: 0;}
@@ -57,7 +57,9 @@
     // e.g. https://youraccount.mite.yo.lk/reports/time_entries/#at=this_month&customer_id=123,124&group_by=day%2Ccustomer&sort=date%20ASC
     var miteReportUrl = location.search.substr(1) + location.hash;
     var apiKey = localStorage.apiKey || prompt('your mite API key')
+    var hours = localStorage.hours || prompt('your goal in hours')
     localStorage.apiKey = apiKey;
+    localStorage.hours = hours;
 
     MiteGoal({
       // your API key here, find it at https://<your accountname>.mite.yo.lk/account
@@ -68,7 +70,7 @@
     .expect( miteReportUrl )
 
     // Number in hours, can also be { days: 2 } etc
-    .toBe( 40 )
+    .toBe( hours )
 
     // (optional) Date Object or whatever http://www.datejs.com/ understands.
     // .by( 'Nov 30th' )
